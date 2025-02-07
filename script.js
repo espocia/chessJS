@@ -35,6 +35,9 @@ class Board {
 						const draggedElement = document.getElementById(data);
 						const cell = event.target
 
+						// Early return of tying to raplce the piece color
+						if (cell.id.substring(0, 4) === draggedElement.id.substring(0, 4)) return
+
 						const targetPieceColorMove = () => {
 							if (color === 'black') {
 								return this.#blackPeice
@@ -57,12 +60,11 @@ class Board {
 						if (cell.id.length === 2) {
 							cell.appendChild(draggedElement);
 						} else {
-							// Early return of tying to raplce the piece color
-							if (cell.id.substring(0, 4) === draggedElement.id.substring(0, 4)) return
 							cell.parentNode.replaceChild(draggedElement, cell)
 						}
 
 						const target = targetPieceColorMove().find((piece) => piece.id === data)
+						console.log(target)
 					}
 				}
 				cell.ondragover = (event) => { event.preventDefault() }
