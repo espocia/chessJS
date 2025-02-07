@@ -6,8 +6,8 @@ class Board {
 		for (let i = 0; i < piece.length; i++) {
 			for (let j = 0; j < children.length; j++) {
 				const targetPiece = piece[i];
-				if (piece[i].initialLocation === children.item(j).id) {
-					const pawn = new ChessPiece(asset, targetPiece.id, targetPiece.initialLocation);
+				if (piece[i].location === children.item(j).id) {
+					const pawn = new ChessPiece(asset, targetPiece.id, targetPiece.location, targetPiece.color);
 					children.item(j).appendChild(pawn.init());
 				};
 			};
@@ -31,8 +31,29 @@ class Board {
 					{
 						event.preventDefault();
 						var data = event.dataTransfer.getData("id");
+						var color = event.dataTransfer.getData("color");
 						const draggedElement = document.getElementById(data);
 						const cell = event.target
+
+						const targetPieceColorMove = () => {
+							if (color === 'black') {
+								return this.#blackPeice
+							} else if (color === 'white') {
+								return this.#whitePiece
+							}
+						}
+
+						targetPieceColorMove().map((piece) => {
+							if (piece.id === data) {
+								if (event.target.id.length === 2) {
+									piece.location = event.target.id
+								} else {
+									piece.location = event.target.parentNode.id
+								}
+
+							}
+						})
+
 						if (cell.id.length === 2) {
 							cell.appendChild(draggedElement);
 						} else {
@@ -41,22 +62,7 @@ class Board {
 							cell.parentNode.replaceChild(draggedElement, cell)
 						}
 
-						const targetPieceColorMove = () => {
-							if (data.startsWith('black')) {
-								return this.#blackPeice
-							} else if (data.startsWith('white')) {
-								return this.#whitePiece
-							}
-						}
-
-						targetPieceColorMove().map((piece) => {
-							if (piece.id === data) {
-								piece.initialLocation = event.target.id
-
-							}
-						})
 						const target = targetPieceColorMove().find((piece) => piece.id === data)
-						//console.log(target)
 					}
 				}
 				cell.ondragover = (event) => { event.preventDefault() }
@@ -79,17 +85,22 @@ class Board {
 // ---- Chess piece logic  ---- //
 class ChessPiece {
 	#location;
-	constructor(sprite, id, location) {
+	#color;
+	#id;
+	constructor(sprite, id, location, color) {
 		this.sprite = sprite
-		this.id = id
+		this.#id = id
 		this.#location = location
+		this.#color = color
 	}
 	init() {
 		const img = document.createElement("img");
-		img.id = this.id
+		img.id = this.#id
+		img.dataset.color = this.#color
 		img.draggable = true;
 		img.ondragstart = (event) => {
 			event.dataTransfer.setData("id", event.target.id);
+			event.dataTransfer.setData("color", event.target.getAttribute('data-color'));
 		};
 		img.src = this.sprite
 		img.classList.add('piece')
@@ -103,38 +114,33 @@ class ChessPiece {
 	set coordinate(newLocation) {
 		this.#location = newLocation
 	}
-
-
-
 }
 
 const whitePieces = [
-	{ id: 'whitePawn1', initialLocation: 'G1' },
-	{ id: 'whitePawn2', initialLocation: 'G2' },
-	{ id: 'whitePawn3', initialLocation: 'G3' },
-	{ id: 'whitePawn4', initialLocation: 'G4' },
-	{ id: 'whitePawn5', initialLocation: 'G5' },
-	{ id: 'whitePawn6', initialLocation: 'G6' },
-	{ id: 'whitePawn7', initialLocation: 'G7' },
-	{ id: 'whitePawn8', initialLocation: 'G8' },
-]
+	{ color: 'white', type: 'pawn', id: 'whitePawn1', location: 'G1' },
+	{ color: 'white', type: 'pawn', id: 'whitePawn2', location: 'G2' },
+	{ color: 'white', type: 'pawn', id: 'whitePawn3', location: 'G3' },
+	{ color: 'white', type: 'pawn', id: 'whitePawn4', location: 'G4' },
+	{ color: 'white', type: 'pawn', id: 'whitePawn5', location: 'G5' },
+	{ color: 'white', type: 'pawn', id: 'whitePawn6', location: 'G6' },
+	{ color: 'white', type: 'pawn', id: 'whitePawn7', location: 'G7' },
+	{ color: 'white', type: 'pawn', id: 'whitePawn8', location: 'G8' },
+];
 
 const blackPieces = [
-	{ id: 'blackPawn1', initialLocation: 'B1' },
-	{ id: 'blackPawn2', initialLocation: 'B2' },
-	{ id: 'blackPawn3', initialLocation: 'B3' },
-	{ id: 'blackPawn4', initialLocation: 'B4' },
-	{ id: 'blackPawn5', initialLocation: 'B5' },
-	{ id: 'blackPawn6', initialLocation: 'B6' },
-	{ id: 'blackPawn7', initialLocation: 'B7' },
-	{ id: 'blackPawn8', initialLocation: 'B8' },
-]
+	{ color: 'black', type: 'pawn', id: 'blackPawn1', location: 'B1' },
+	{ color: 'black', type: 'pawn', id: 'blackPawn2', location: 'B2' },
+	{ color: 'black', type: 'pawn', id: 'blackPawn3', location: 'B3' },
+	{ color: 'black', type: 'pawn', id: 'blackPawn4', location: 'B4' },
+	{ color: 'black', type: 'pawn', id: 'blackPawn5', location: 'B5' },
+	{ color: 'black', type: 'pawn', id: 'blackPawn6', location: 'B6' },
+	{ color: 'black', type: 'pawn', id: 'blackPawn7', location: 'B7' },
+	{ color: 'black', type: 'pawn', id: 'blackPawn8', location: 'B8' },
+];
 
 const boardDiv = document.getElementById('board')
 const board = new Board(whitePieces, blackPieces, boardDiv)
 board.init()
-
-const children = document.getElementById('board').children
 
 
 
