@@ -33,9 +33,13 @@ class Board {
 						var data = event.dataTransfer.getData("id");
 						const draggedElement = document.getElementById(data);
 						const cell = event.target
-						cell.appendChild(draggedElement);
-						console.log(event.target, draggedElement)
-
+						if (cell.id.length === 2) {
+							cell.appendChild(draggedElement);
+						} else {
+							// Early return of tying to raplce the piece color
+							if (cell.id.substring(0, 4) === draggedElement.id.substring(0, 4)) return
+							cell.parentNode.replaceChild(draggedElement, cell)
+						}
 
 						const targetPieceColorMove = () => {
 							if (data.startsWith('black')) {
