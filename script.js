@@ -59,9 +59,15 @@ class Board {
 						const draggedElement = document.getElementById(data);
 						const cell = event.target
 
-						// Early return of tying to raplce the piece color
-						if (cell.tagName === 'IMG') {
-							if (draggedElement.getAttribute('data-color') === color) return
+						if (event.target.tagName === 'IMG') {
+							// if event target is img -> capture
+							// if event target is div -> move
+							console.log(draggedElement, event.target)
+
+							// Early return of tying to raplce the piece color
+							if (event.target.parentNode.getAttribute('data-color') === color) {
+								return
+							}
 						}
 
 						const targetPieceColorMove = () => {
@@ -90,7 +96,7 @@ class Board {
 						}
 
 						const target = targetPieceColorMove().find((piece) => piece.id === data)
-						console.log(target)
+						//console.log(target)
 					}
 				}
 				cell.ondragover = (event) => { event.preventDefault() }
