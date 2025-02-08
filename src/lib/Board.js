@@ -10,7 +10,7 @@ export class Board {
 				const targetPiece = piece[i];
 				if (piece[i].location === children.item(j).id) {
 					const asset = (color, type) => {
-						return `./assets/chess-${type}-${color}.png`
+						return `/src/assets/chess-${type}-${color}.png`
 					}
 
 					function createFromClass(type) {
