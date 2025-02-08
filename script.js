@@ -39,7 +39,9 @@ class Board {
 						const cell = event.target
 
 						// Early return of tying to raplce the piece color
-						if (cell.id.substring(0, 4) === draggedElement.id.substring(0, 4)) return
+						if (cell.tagName === 'IMG') {
+							if (draggedElement.getAttribute('data-color') === color) return
+						}
 
 						const targetPieceColorMove = () => {
 							if (color === 'black') {
@@ -67,6 +69,7 @@ class Board {
 						}
 
 						const target = targetPieceColorMove().find((piece) => piece.id === data)
+						console.log(target)
 					}
 				}
 				cell.ondragover = (event) => { event.preventDefault() }
