@@ -1,3 +1,4 @@
+import { makeCellActive, makeCellInactive } from "../utils/utilities.js";
 import { ChessPiece, Pawn, Bishop, Queen, King, Rook, Knight } from "./ChessPiece.js";
 export class Board {
 	#whitePiece
@@ -13,7 +14,6 @@ export class Board {
 					}
 
 					function createFromClass(type) {
-						console.log(type)
 						switch (type) {
 							case 'pawn':
 								return new Pawn(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
@@ -45,30 +45,27 @@ export class Board {
 		this.board = board
 	}
 	init() {
-		const coordinate = { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8 }
+		const coordinate = { A: 1, B: 2, C: 3, D: 4, E: 5, F: 6, G: 7, H: 8 };
 		for (let i = 0; i < 8; i++) {
-			const vertical = Object.keys(coordinate).find(key => coordinate[key] === i + 1)
+			const vertical = Object.keys(coordinate).find(key => coordinate[key] === i + 1);
 
 			for (let j = 0; j < 8; j++) {
-				const cell = document.createElement('div')
-				cell.setAttribute('id', `${vertical}${j + 1}`)
+				const cell = document.createElement('div');
+				cell.setAttribute('id', `${vertical}${j + 1}`);
+				cell.draggable = false;
 				cell.ondrop = (event) => {
 					{
 						event.preventDefault();
-						var data = event.dataTransfer.getData("id");
+						var draggedElementId = event.dataTransfer.getData("id");
 						var color = event.dataTransfer.getData("color");
-						const draggedElement = document.getElementById(data);
+						const draggedElement = document.getElementById(draggedElementId);
 						const cell = event.target
 
 						if (event.target.tagName === 'IMG') {
 							// if event target is img -> capture
 							// if event target is div -> move
-							console.log(draggedElement, event.target)
-
-							// Early return of tying to raplce the piece color
-							if (event.target.parentNode.getAttribute('data-color') === color) {
-								return
-							}
+							// Early return if tying to raplce the piece of the same color
+							if (event.target.parentNode.getAttribute('data-color') === color) return
 						}
 
 						const targetPieceColorMove = () => {
@@ -80,34 +77,54 @@ export class Board {
 						}
 
 						targetPieceColorMove().map((piece) => {
-							if (piece.id === data) {
-								if (event.target.id.length === 2) {
+							if (piece.id === draggedElementId) {
+								//console.log(`piece.id: ${piece.id}\ndata: ${data}\nevent.target.id: ${event.target.id}\n${event.target.tagName}`)
+								if (event.target.id) {
 									piece.location = event.target.id
 								} else {
-									piece.location = event.target.parentNode.id
+									// cell > piece contianer > img
+									piece.location = event.target.parentNode.parentNode.id
 								}
 
 							}
 						})
 
-						if (cell.id.length === 2) {
+						if (cell.id) {
+							console.log(cell)
 							cell.appendChild(draggedElement);
 						} else {
+							console.log(cell)
 							cell.parentNode.replaceChild(draggedElement, cell)
 						}
 
-						const target = targetPieceColorMove().find((piece) => piece.id === data)
-						//console.log(target)
+						if (event.target.id) {
+							const children = this.board.children;
+							const searhMatch = () => {
+								const match = Array.from(children).find((cell) => cell.id === event.target.id)
+								if (match) match.classList.remove('hover')
+							}
+							searhMatch()
+						};
+
+						makeCellInactive(event, this.board.children)
+						const target = targetPieceColorMove().find((piece) => piece.id === draggedElementId)
+						console.log(target)
 					}
 				}
-				cell.ondragover = (event) => { event.preventDefault() }
-				cell.classList.add('cell')
+				cell.ondragover = (event) => {
+					makeCellActive(event, this.board.children)
+				};
+				cell.ondragleave = (event) => {
+					makeCellInactive(event, this.board.children)
+				}
+
+				cell.classList.add('cell');
 
 				if (((i % 8) % 2 === 0)) {
-					cell.classList.add(j % 2 === 0 ? 'black' : 'white')
+					cell.classList.add(j % 2 === 0 ? 'black' : 'white');
 				} else {
-					cell.classList.add(j % 2 === 0 ? 'white' : 'black')
-				}
+					cell.classList.add(j % 2 === 0 ? 'white' : 'black');
+				};
 				this.board.appendChild(cell)
 			}
 		}

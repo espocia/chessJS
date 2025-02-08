@@ -3,14 +3,14 @@ export class ChessPiece {
 	#color;
 	#id;
 	constructor(sprite, id, location, color) {
-		this.sprite = sprite
-		this.#id = id
-		this.#location = location
-		this.#color = color
-	}
+		this.sprite = sprite;
+		this.#id = id;
+		this.#location = location;
+		this.#color = color;
+	};
 	setStyle() {
-		return { width: '100px', 'top': '20%' }
-	}
+		return { width: '100px', 'top': '20%' };
+	};
 
 	init() {
 
@@ -21,8 +21,8 @@ export class ChessPiece {
 		img.style.top = top;
 
 		const div = document.createElement("div");
-		div.id = this.#id
-		div.dataset.color = this.#color
+		div.id = this.#id;
+		div.dataset.color = this.#color;
 		div.draggable = true;
 		div.ondragstart = (event) => {
 			const target = event.target.parentNode;
@@ -33,16 +33,16 @@ export class ChessPiece {
 		div.classList.add('piece')
 		div.appendChild(img)
 		return div
-	}
+	};
 
 	get coordinate() {
 		return this.#location
-	}
+	};
 
 	set coordinate(newLocation) {
 		this.#location = newLocation
-	}
-}
+	};
+};
 
 export class Pawn extends ChessPiece {
 	constructor(sprite, id, location, color) {

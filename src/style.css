@@ -45,3 +45,7 @@
 	left: 50%;
 	background: transparent;
 }
+
+.hover {
+	background-color: gray;
+}
