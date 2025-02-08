@@ -10,8 +10,29 @@ class Board {
 					const asset = (color, type) => {
 						return `./assets/chess-${type}-${color}.png`
 					}
-					const pawn = new ChessPiece(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
-					children.item(j).appendChild(pawn.init());
+
+					function createFromClass(type) {
+						console.log(type)
+						switch (type) {
+							case 'pawn':
+								return new Pawn(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
+							case 'bishop':
+								return new Bishop(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
+							case 'queen':
+								return new Queen(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
+							case 'king':
+								return new King(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
+							case 'rook':
+								return new Rook(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
+							case 'knight':
+								return new Knight(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
+							default:
+								return new ChessPiece(asset(targetPiece.color, targetPiece.type), targetPiece.id, targetPiece.location, targetPiece.color);
+
+						}
+					}
+					const chessPiece = createFromClass(targetPiece.type)
+					children.item(j).appendChild(chessPiece.init());
 				};
 			};
 		};
@@ -100,11 +121,19 @@ class ChessPiece {
 		this.#location = location
 		this.#color = color
 	}
-	init() {
-		const div = document.createElement("div");
-		const img = document.createElement("img")
+	setStyle() {
+		return { width: '100px', 'top': '20%' }
+	}
 
-		img.src = this.sprite
+	init() {
+
+		const img = document.createElement("img");
+		img.src = this.sprite;
+		const { width, top } = this.setStyle();
+		img.style.width = width;
+		img.style.top = top;
+
+		const div = document.createElement("div");
 		div.id = this.#id
 		div.dataset.color = this.#color
 		div.draggable = true;
@@ -128,6 +157,59 @@ class ChessPiece {
 	}
 }
 
+class Pawn extends ChessPiece {
+	constructor(sprite, id, location, color) {
+		super(sprite, id, location, color)
+	}
+	setStyle() {
+		return { width: '100px', 'top': '20%' }
+	}
+}
+class Bishop extends ChessPiece {
+	constructor(sprite, id, location, color) {
+		super(sprite, id, location, color)
+	}
+	setStyle() {
+		return { width: '70px', 'top': '-10%' }
+	}
+}
+
+class Queen extends ChessPiece {
+	constructor(sprite, id, location, color) {
+		super(sprite, id, location, color)
+	}
+	setStyle() {
+		return { width: '70px', 'top': '-10%' }
+	}
+}
+
+class King extends ChessPiece {
+	constructor(sprite, id, location, color) {
+		super(sprite, id, location, color)
+	}
+	setStyle() {
+		return { width: '120px', 'top': '-25%' }
+	}
+}
+
+class Rook extends ChessPiece {
+	constructor(sprite, id, location, color) {
+		super(sprite, id, location, color)
+	}
+	setStyle() {
+		return { width: '100px', 'top': '10%' }
+	}
+}
+class Knight extends ChessPiece {
+	constructor(sprite, id, location, color) {
+		super(sprite, id, location, color)
+	}
+	setStyle() {
+		return { width: '150px', 'top': '10%' }
+	}
+}
+
+
 const whitePieces = [
 	{ color: 'white', type: 'pawn', id: 'whitePawn1', location: 'G1' },
 	{ color: 'white', type: 'pawn', id: 'whitePawn2', location: 'G2' },
@@ -142,7 +224,7 @@ const whitePieces = [
 	{ color: 'white', type: 'knight', id: 'whiteKnight1', location: 'H2' },
 	{ color: 'white', type: 'knight', id: 'whiteKnight2', location: 'H7' },
 	{ color: 'white', type: 'bishop', id: 'whiteBishop1', location: 'H6' },
-	{ color: 'white', type: 'bishop', id: 'whiteBishop1', location: 'H3' },
+	{ color: 'white', type: 'bishop', id: 'whiteBishop2', location: 'H3' },
 	{ color: 'white', type: 'king', id: 'whiteKing', location: 'H5' },
 	{ color: 'white', type: 'queen', id: 'whiteQueen', location: 'H4' },
 ];
@@ -161,7 +243,7 @@ const blackPieces = [
 	{ color: 'black', type: 'knight', id: 'blackKnight1', location: 'A2' },
 	{ color: 'black', type: 'knight', id: 'blackKnight2', location: 'A7' },
 	{ color: 'black', type: 'bishop', id: 'blackBishop1', location: 'A6' },
-	{ color: 'black', type: 'bishop', id: 'blackBishop1', location: 'A3' },
+	{ color: 'black', type: 'bishop', id: 'blackBishop2', location: 'A3' },
 	{ color: 'black', type: 'king', id: 'blackKing', location: 'A5' },
 	{ color: 'black', type: 'queen', id: 'blackQueen', location: 'A4' },
 ];
